@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import numpy as np
+import dash
 from dash import Dash, dash_table, html, dcc, Input, Output, callback
 import dash_bootstrap_components as dbc
 
@@ -24,18 +25,27 @@ CONTENT_STYLE = {
     "padding": "2rem 1rem",
 }
 
-
-app = Dash(external_stylesheets=[dbc.themes.DARKLY])
-
-
 class Dashboard:
     header = dcc.Markdown('# My Journal')
 
     def __init__(self, filename):
+        self.app = Dash(external_stylesheets=[dbc.themes.DARKLY])
         self.filename = filename
         self.path = f'../data/{filename}.csv'
 
         self._df = pd.DataFrame()
+
+        self.category = 'Categeory'
+        self.app.callback(
+            Output('new-input', 'disabled'),
+        [
+            Input('select', 'value'),
+        ],
+        )(self.category_button)
+
+    def category_button(self, select):
+        print(select)
+        return select
 
     @property
     def df(self):
@@ -90,12 +100,12 @@ class Dashboard:
         return _cards
 
     def form(self):
-        dropdown_menu_items = [
-            dbc.DropdownMenuItem("cat1", id="dropdown-menu-item-1"),
-            dbc.DropdownMenuItem("cat2", id="dropdown-menu-item-2"),
-            dbc.DropdownMenuItem(divider=True),
-            dbc.DropdownMenuItem("New", id="dropdown-menu-item-new"),
-        ]
+        # dropdown_menu_items = [
+        #     dbc.DropdownMenuItem("cat1", id="dropdown-menu-item-1"),
+        #     dbc.DropdownMenuItem("cat2", id="dropdown-menu-item-2"),
+        #     dbc.DropdownMenuItem(divider=True),
+        #     dbc.DropdownMenuItem("New", id="dropdown-menu-item-new"),
+        # ]
 
         input_group = html.Div(
         [
@@ -112,17 +122,25 @@ class Dashboard:
             #Categories
             dbc.InputGroup(
                 [
-                    dbc.DropdownMenu(dropdown_menu_items, label="Categeory"),
-                    dbc.Input(placeholder="New Categeory") if True else None,
-                    dbc.Input(placeholder="Value", id="input-group-dropdown-input")
+                    dbc.Select(
+                        id='select', 
+                        options=[
+                            {"label": "Option 1", "value": True},
+                            {"label": "Option 2", "value": True},
+                            {"label": "Option 3", "value": False},
+                        ]),
+                    dbc.Input(placeholder="New Categeory", id='new-input', disabled={}) if True else None,
+                    dbc.Input(placeholder="Value")
                 ]
             ),
         ])
         return [input_group]
 
+
+
     def build(self):
         # self.app.layout = dbc.Container(self.cards())
-        app.layout = html.Div([
+        self.app.layout = html.Div([
                 dbc.Container(self.form(), style=SIDEBAR_STYLE),
                 dbc.Container(self.cards(), style=CONTENT_STYLE),
             ])
@@ -130,7 +148,4 @@ class Dashboard:
 if __name__ == '__main__':
     dash = Dashboard('myLog')
     dash.build()
-    app.run(debug=True)
-
-
-
+    dash.app.run(debug=True)
