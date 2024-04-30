@@ -7,7 +7,7 @@ import pandas as pd
 class Data:
 	DATA_PATH = '../data'
 
-	def __init__(self, filename):
+	def __init__(self, filename='myLog'):
 		self.filename = filename
 		self.path = f'{self.DATA_PATH}/{self.filename}.csv'
 
@@ -50,11 +50,6 @@ if __name__ == '__main__':
 	# d.new_entry('note', 'This is a note')
 	# d.write()
 	# print(d.df)
-	for date in d.df.index:
-		x = d.df.loc[date, 'note']
-		print(str(x))
-
-
 
 
 

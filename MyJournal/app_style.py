@@ -15,3 +15,7 @@ CONTENT_STYLE = {
     "margin-right": "2rem",
     "padding": "2rem 1rem",
 }
+
+FORM_STYLE = {
+    "padding": "0.8rem 0.1rem",
+}

@@ -1,3 +1,6 @@
 from dash import html
 
-print(help(html.Button))
+a = ['a', 'b', 'c']
+
+a = set(a).difference('b')
+print(a)
