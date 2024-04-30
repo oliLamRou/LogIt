@@ -1,70 +1,111 @@
-from dash import Dash, dash_table, html, dcc, Input, Output, callback
+from dash import Dash, html, Input, Patch
 import dash_bootstrap_components as dbc
 
-CATEGORIES = ['run', 'yoga', 'crying']
+from app_style import FORM_STYLE
+from data import Data
+from cards import Cards
 
-def get_dropdownmenu():
-    dropdownmenu = [dbc.DropdownMenuItem(category.capitalize(), id=category) for category in CATEGORIES]
-    dropdownmenu.append(dbc.DropdownMenuItem(divider=True))
-    dropdownmenu.append(dbc.DropdownMenuItem('New Categeory', id='new categeory'))
-    return dropdownmenu
+class Form(Cards):
+    def __init__(self):
+        super().__init__()
 
-def get_inputs():
-    inputs = [Input(category, 'n_clicks') for category in CATEGORIES]
-    inputs.append(Input('new categeory', 'n_clicks'))
-    return inputs
+        #Data
+        self._dropdown_menu_items = None
 
-def form():
-    input_group = html.Div(
-    [
-        #Title
-        dbc.InputGroup(
-            [dbc.Input(placeholder="Title")],
-            className="mb-3",
-        ),
-        #Notes
-        dbc.InputGroup(
-            [dbc.Textarea(placeholder="Note")],
-            className="mb-3",
-        ),
-        dbc.InputGroup(
+        #Form elements
+        self._save_clear_button = None
+
+        self._form = None
+
+        self.dropdown_categories_list = None
+        self.set_dropdown_categories_list()
+
+    def set_dropdown_categories_list(self):
+        self.dropdown_categories_list = [Input(category, 'n_clicks') for category in self.categories]
+        self.dropdown_categories_list.append(Input('new category', 'n_clicks'))
+
+    @property
+    def dropdown_menu_items(self):
+        self._dropdown_menu_items = Patch()
+        #Get all current categories aka columns in the df. ignore date, title and note
+        for category in self.categories:
+            self._dropdown_menu_items.append(
+                dbc.DropdownMenuItem(category.title(), id=category)
+            )
+        # self._dropdown_menu_items = [dbc.DropdownMenuItem(category.title(), id=category) for category in self.categories]
+        
+        #Seperator
+        self._dropdown_menu_items.append(dbc.DropdownMenuItem(divider=True))
+        
+        #New Category button
+        self._dropdown_menu_items.append(dbc.DropdownMenuItem('New Category', id='new category'))
+
+        return self._dropdown_menu_items
+
+    @property
+    def title_input(self):
+        return dbc.InputGroup(
             [
-                dbc.DropdownMenu(
-                    get_dropdownmenu(),
-                    label="Generate", id='dropdownmenu-label'
-                ),
-                dbc.Input(placeholder="new categeory", id='new-category'),
-                dbc.Input(placeholder="Value", id='value-disable')
-            ]
-        ),
-        dbc.InputGroup(
-            [
-                dbc.Button("+", color="success", className="me-1"),
-            ]
-        ),
-        dbc.InputGroup(
-            [
-                dbc.Button("Enter", color="primary", className="me-1"),
-                dbc.Button("Cancel", color="secondary", className="me-1"),
+                dbc.Input(placeholder="Title", id='title-input')
             ]
         )
-    ])
-    return [input_group]
 
-@app.callback(
-    [
-        Output('new-category', 'style'),
-        Output('dropdownmenu-label', 'label'),
-        Output('value-disable', 'disabled'),
-    ],
-    get_inputs())
-def category_button(*args,**kwargs):
-    if not ctx.triggered:
-        return {'display': 'none'}, 'Categeory', True
-    else:
-        button_id = ctx.triggered[0]["prop_id"].split(".")[0]
+    @property
+    def note_input(self):
+        return dbc.InputGroup(
+            [
+                dbc.Textarea(placeholder="Note", id='note-input')
+            ]
+        )
 
-    if button_id == 'new categeory':
-        return {'display': 'block'}, button_id.capitalize(), False
-    else:
-        return {'display': 'none'}, button_id.capitalize(), False
+    @property
+    def category_dropdown(self):
+        return 
+
+    @property
+    def category_input(self):
+        return dbc.InputGroup(
+                [
+                    dbc.DropdownMenu(
+                        children=self.dropdown_menu_items, 
+                        label='Category', 
+                        id='category-dynamic-dropdown', 
+                        color="info"
+                    ),
+                    dbc.Input(placeholder="new category", id='new-category'),
+                    dbc.Input(placeholder="Value", id='value-input')
+                ],
+            )
+
+    @property
+    def save_clear_button(self):
+        self._save_clear_button = dbc.InputGroup(
+                [
+                    dbc.Button("Save", color="success", id='save-button'),
+                    dbc.Button("Clear", color="dark", id='clear-button'),
+                ],
+                style = FORM_STYLE
+            )
+
+        return self._save_clear_button
+
+    @property
+    def form(self):
+        self._form = html.Div(
+            [
+                self.title_input,
+                self.note_input,
+                self.category_input,
+                self.save_clear_button
+            ]
+        )
+        return self._form
+
+if __name__ == '__main__':
+    f = Form()
+    print(f.form)
+
+
+
+
+
