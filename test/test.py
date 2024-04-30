@@ -1,6 +1,3 @@
-from dash import html
+from MyJournal.MyJournal.data import Data
 
-a = ['a', 'b', 'c']
-
-a = set(a).difference('b')
-print(a)
+data = Data()

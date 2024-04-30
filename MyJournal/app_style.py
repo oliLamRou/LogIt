@@ -19,3 +19,7 @@ CONTENT_STYLE = {
 FORM_STYLE = {
     "padding": "0.8rem 0.1rem",
 }
+
+CARD_STYLE = {
+    "padding": "1rem 0rem",
+}

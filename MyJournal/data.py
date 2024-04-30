@@ -29,27 +29,26 @@ class Data:
 	def df(self):
 		#create new DF if no filename and df is empty
 		if not os.path.exists(self.path) and self._df.empty:
-			self._df = pd.DataFrame(columns=['date', 'note']).set_index('date')
+			self._df = pd.DataFrame(columns=['date', 'title', 'note']).set_index('date')
 
 		#load filename
 		elif self._df.empty:
-			self._df = pd.read_csv(self.path).set_index('date')
+			self._df = pd.read_csv(self.path).sort_values('date', ascending=False).set_index('date')
 
 		return self._df
 
-	def write(self):
+	def save(self):
 		self.df.to_csv(self.path)
 
 	def new_entry(self, category, entry):
 		self.df.loc[self.now, category] = entry
+		self.df.sort_values('date', ascending=False, inplace=True)
 
 
 if __name__ == '__main__':
 	d = Data('myLog')
-	# d.new_entry('yoga', '20')
-	# d.new_entry('note', 'This is a note')
-	# d.write()
-	# print(d.df)
+	print(d.df)
+
 
 
 
