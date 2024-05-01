@@ -34,6 +34,7 @@ def save_clear_button(save, clear, title, note, selected_category, new_category,
         form.new_entry('title', title)
         form.new_entry('note', note)
         form.new_entry(category_value, value)
+        form.save()
 
     return form.cards, form.form
 
