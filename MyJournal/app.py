@@ -8,83 +8,51 @@ from cards import Cards
 
 app = Dash(__name__, external_stylesheets=[dbc.themes.DARKLY])
 
-cards = Cards()
 form = Form()
-
-def get_inputs():
-    #Get inputs based on categories
-    inputs = [Input({'type': 'category-dynamic-dropdown', 'index': MATCH}, 'value')]
-    # inputs = [Input(category, 'n_clicks') for category in form.categories]
-    inputs.append(Input('new category', 'n_clicks'))
-    return inputs
 
 #SAVE CLEAR
 @app.callback(
     [
-        Output('title-input',       'value'),
-        Output('note-input',        'value'),
-        Output('value-input',       'value'),
-        Output('new-category',      'value'),
-        Output('cards_container',   'children'),
-        Output('form_container',    'children'),
-        
+        Output('cards_container-id', 'children'),
+        Output('form_container-id', 'children')
     ],
     [
-        Input('save-button',        'n_clicks'),
-        Input('clear-button',       'n_clicks'),
+        Input('save-button-id', 'n_clicks'),
+        Input('clear-button-id', 'n_clicks'),
     ],
     [
-        State('title-input',        'value'),
-        State('note-input',         'value'),
-        State('category-dropdown',  'label'),
-        State('new-category',       'value'),
-        State('value-input',        'value'),
+        State('title-id', 'value'),
+        State('note-id', 'value'),
+        State('select-category-id', 'value'),
+        State('new-category-id', 'value'),
+        State('value-id', 'value'),
     ])
-def save_clear_button(save, clear, title, note, category, new_category, metric):
-    button_id = None
-    if ctx.triggered:
-        button_id = ctx.triggered[0]["prop_id"].split(".")[0]
+def save_clear_button(save, clear, title, note, selected_category, new_category, value):
+    category_value = new_category if selected_category == 'new category' else selected_category
 
-    if button_id and button_id == 'save-button':
+    if ctx.triggered_id == 'save-button-id':
         form.new_entry('title', title)
         form.new_entry('note', note)
-        if category == 'new category':
-            form.new_entry(new_category.lower(), metric)
-        else:
-            form.new_entry(category, metric)
+        form.new_entry(category_value, value)
 
-        #NOTE: ok to save each time ?
-        form.save()
+    return form.cards, form.form
 
-    return '', '', '', '', form.cards, form.form
-
-#Dropdown Category
+#Category Select
 @app.callback(
-        [
-            Output('new-category', 'style'),
-            Output('category-dropdown', 'label'),
-            Output('value-input', 'disabled'),
-        ],
-        [
-            Input({'type': 'category-dynamic-dropdown', 'index': ALL}, 'children'),
-            Input('new category', 'n_clicks')
-        ]
+        Output('new-category-id', 'style'),
+        Input('select-category-id', 'value')
     )
-def category_button(values, n_clicks):
-    button_id = 'Category'
-    if ctx.triggered:
-        button_id = ctx.triggered[0]["prop_id"].split(".")[0]
-
-        if button_id == 'new category':
-            return {'display': 'block'}, button_id, False
+def select_category_options(value):
+    if value == 'new category':
+        return {'display': 'block'}
         
-    return {'display': 'none'}, button_id, False
+    return {'display': 'none'}
 
 if __name__ == '__main__':
     app.layout = html.Div(
         [
-            dbc.Container(form.form, style=SIDEBAR_STYLE, id='form_container'),
-            dbc.Container(form.cards, style=CONTENT_STYLE, id='cards_container')
+            dbc.Container(form.form, style=SIDEBAR_STYLE, id='form_container-id'),
+            dbc.Container(form.cards, style=CONTENT_STYLE, id='cards_container-id')
         ]
     )
     app.run(debug=True)
