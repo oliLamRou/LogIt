@@ -1,12 +1,9 @@
-import pandas as pd
-
-from dash import Dash, html, dcc, Input, Output, callback, ctx, State
+from dash import dcc
 import dash_bootstrap_components as dbc
 
-from app_style import SIDEBAR_STYLE, CONTENT_STYLE, FORM_STYLE, CARD_STYLE
+from app_style import CARD_STYLE
 
 from data import Data
-data = Data()
 
 class Cards(Data):
 
@@ -17,7 +14,7 @@ class Cards(Data):
     @property
     def cards(self):
         #Cards Top page text
-        self._cards = [dcc.Markdown('## Hello')]
+        self._cards = [dcc.Markdown('# My Log')]
 
         for date in self.df.index:
             row = self.df.loc[date]
@@ -56,7 +53,7 @@ class Cards(Data):
     def card(self, date):
         return dbc.Card(
             [
-                dbc.CardHeader(self.df.loc[date, 'title']),
+                dbc.CardHeader(self.df.loc[date, 'title'].title()),
                 self.card_body(date)
             ]
         )    

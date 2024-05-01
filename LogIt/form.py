@@ -6,6 +6,9 @@ from data import Data
 from cards import Cards
 
 class Form(Cards):
+
+    new_category_label = 'new category'
+
     def __init__(self):
         super().__init__()
 
@@ -31,9 +34,9 @@ class Form(Cards):
     def select_options(self):
         options = []
         for category in self.categories:
-            options.append({"label": category, "value": category})
+            options.append({"label": category.title(), "value": category})
 
-        options.append({"label": 'new category', "value": 'new category'})
+        options.append({"label": self.new_category_label.title(), "value": self.new_category_label})
         return options
 
     @property
@@ -43,9 +46,9 @@ class Form(Cards):
                 dbc.Select(
                     options=self.select_options,
                     id='select-category-id',
-                    value='new category'
+                    value=self.new_category_label
                 ),
-                dbc.Input(placeholder="new category", id='new-category-id'),
+                dbc.Input(placeholder="Category", id='new-category-id'),
                 dbc.Input(placeholder="Value", id='value-id')
             ],
             className="mb-1",
