@@ -1,14 +1,10 @@
 from dash import Dash, html, Input, Output, callback, ctx, State, MATCH, ALL
 import dash_bootstrap_components as dbc
 
-from app_style import SIDEBAR_STYLE, CONTENT_STYLE
-from form import Form
-from data import Data
-from cards import Cards
+from app.style import SIDEBAR_STYLE, CONTENT_STYLE
+from app.form import Form
 
 app = Dash(__name__, external_stylesheets=[dbc.themes.DARKLY])
-
-form = Form()
 
 #SAVE CLEAR
 @app.callback(
@@ -50,6 +46,7 @@ def select_category_options(value):
     return {'display': 'none'}
 
 if __name__ == '__main__':
+    form = Form()
     app.layout = html.Div(
         [
             dbc.Container(form.form, style=SIDEBAR_STYLE, id='form_container-id'),

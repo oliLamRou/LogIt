@@ -1,11 +1,10 @@
 from dash import Dash, html, Input, Patch
 import dash_bootstrap_components as dbc
 
-from app_style import FORM_STYLE
-from data import Data
-from cards import Cards
+from app.style import FORM_STYLE
+from app.logs import Logs
 
-class Form(Cards):
+class Form(Logs):
 
     new_category_label = 'new category'
 

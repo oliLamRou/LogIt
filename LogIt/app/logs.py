@@ -1,11 +1,11 @@
 from dash import dcc
 import dash_bootstrap_components as dbc
 
-from app_style import CARD_STYLE
+from app.style import CARD_STYLE
 
-from data import Data
+from app.data import Data
 
-class Cards(Data):
+class Logs(Data):
 
     def __init__(self):
         super().__init__()
@@ -29,7 +29,7 @@ class Cards(Data):
             note = '---'
 
         #Add first elem in markdown list
-        return [dcc.Markdown(f'### {note}')]
+        return [dcc.Markdown(f'#### {note}')]
 
     def get_categories_markdown(self, date):
         categories_text = []
